@@ -35,6 +35,7 @@ namespace API
             {
                 options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
+            services.AddCors(); //Cross-Origin Resource Sharing
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +49,11 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            // Cross-Origin Resource Sharing 
+            // this has to be after UseRouting(), before UseEndpoints() and since we use authorization, before UseAuthorization()
+            // stratos
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 
             app.UseAuthorization();
 
