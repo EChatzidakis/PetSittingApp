@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
@@ -11,26 +13,29 @@ import { AccountService } from '../_services/account.service';
 export class NavComponent implements OnInit {
 
   model: any = {}
-  constructor(public accountService: AccountService) {  }
+  constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService) {  }
 
   ngOnInit(): void {
   }
 
   login() {
     this.accountService.login(this.model).subscribe(response => {
+      this.router.navigateByUrl('/members');
       console.log(response);
     }, error => {
       console.log(error);
+      this.toastr.error(error.error);      
     });
   }
 
   logOut() {
     this.accountService.logOut();
+    this.router.navigateByUrl('/');
   }
 
   getUserName() {
     let currentUser = JSON.parse(localStorage.getItem('user'));
-    let username = currentUser.username.charAt(0).toUpperCase() + currentUser.username.slice(1);
-    return username;
+    //let username = currentUser.username.charAt(0).toUpperCase() + currentUser.username.slice(1); //obselete as we can use titlecase in the template
+    return currentUser.username;//username;
   }
 }
